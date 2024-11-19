@@ -2,6 +2,7 @@ import xlwings as xw
 
 
 def main():
+    itemResults = {}
     with xw.Book("./data/data.xlsx", mode="r") as book:
         # figure out the item ids
         firstWeek = book.sheets[4]
@@ -17,7 +18,6 @@ def main():
             indexToId[i] = itemId
             indexToName[i] = itemName
 
-        itemResults = {}
         # each item result is a list of the following:
         # {item_name: [[date, order (full), order (short)]]}
 
@@ -55,6 +55,19 @@ def main():
                 itemName = indexToName[row - 1]
                 itemResults[itemName] = itemResults.get(itemName, []) + [dataRow]
         print(itemResults)
+
+    # output a new workbook with each sheet being a item name at A0 and then the data
+    with xw.Book("./data/output.xlsx", mode="w") as book:
+        for itemName, itemData in itemResults.items():
+            # print(itemName)
+            # print(itemData)
+            sheet = book.sheets.add(itemName)
+            sheet.range("a1").value = itemName
+            for date, orders in itemData:
+                sheet.range(f"a{len(itemData) + 2}").value = date
+                sheet.range(f"b{len(itemData) + 2}").value = orders[0]
+                sheet.range(f"c{len(itemData) + 2}").value = orders[1]
+    print("done")
 
 
 if __name__ == "__main__":
