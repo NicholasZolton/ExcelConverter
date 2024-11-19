@@ -59,8 +59,6 @@ def main():
     # output a new workbook with each sheet being a item name at A0 and then the data
     with xw.Book("./data/output.xlsx", mode="w") as book:
         for itemName, itemData in itemResults.items():
-            # print(itemName)
-            # print(itemData)
             sheet = book.sheets.add(itemName)
             sheet.range("a1").value = itemName
             for date, orders in itemData:
